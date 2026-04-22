@@ -1,4 +1,3 @@
-#app/init
 from flask import Flask
 from app.extensions import db
 from app.config import Config
@@ -11,7 +10,10 @@ def create_app():
     db.init_app(app)
 
     # Register blueprints
-    from app.routes.health_route import health_bp
-    app.register_blueprint(health_bp, url_prefix='/api')
+    from app.modules.health_route import health_bp
+    from app.modules.auth.routes import auth_bp
+
+    app.register_blueprint(health_bp, url_prefix="/api")
+    app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
     return app

@@ -1,8 +1,5 @@
-#app/config
-
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
 
 class Config:
@@ -12,4 +9,9 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
         "pool_recycle": 300,
+        "connect_args": {
+            "sslmode": "require"
+        }
     }
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
