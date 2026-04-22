@@ -116,7 +116,6 @@
 ```
 
 ---
-
 ## 3. STUDY CONTENT MODULE
 
 ### GET `/study/summary/<lecture_id>`
@@ -126,6 +125,8 @@
 ```json
 {
   "lecture_id": "uuid",
+  "title": "Introduction to AI",
+  "language": "en",
   "summary": "This lecture covers..."
 }
 ```
@@ -138,7 +139,9 @@
 **Response:**
 ```json
 {
+  "lecture_id": "uuid",
   "slide_number": 3,
+  "language": "en",
   "explanation": "This slide talks about..."
 }
 ```
@@ -151,13 +154,87 @@
 **Response:**
 ```json
 {
+  "lecture_id": "uuid",
+  "language": "en",
   "flashcards": [
     {
       "id": 1,
       "front": "What is Machine Learning?",
-      "back": "A subset of AI that allows machines to learn from data"
+      "back": "A subset of AI that allows machines to learn from data",
+      "slide_ref": 2
     }
   ]
+}
+```
+
+---
+
+### GET `/study/mindmap/<lecture_id>`
+**Description:** Get AI generated mind map structure for the lecture
+
+**Response:**
+```json
+{
+  "lecture_id": "uuid",
+  "language": "en",
+  "mindmap": {
+    "central": "Artificial Intelligence",
+    "branches": [
+      {
+        "id": "1",
+        "label": "Machine Learning",
+        "children": [
+          {
+            "id": "1-1",
+            "label": "Supervised Learning",
+            "children": []
+          },
+          {
+            "id": "1-2",
+            "label": "Unsupervised Learning",
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+---
+
+### GET `/study/glossary/<lecture_id>`
+**Description:** Get AI generated key terms and definitions for the lecture
+
+**Response:**
+```json
+{
+  "lecture_id": "uuid",
+  "language": "en",
+  "glossary": [
+    {
+      "id": 1,
+      "term": "Neural Network",
+      "definition": "A computational model inspired by the human brain consisting of interconnected nodes.",
+      "example": "A neural network can recognize cats in images after training on thousands of photos.",
+      "slide_ref": 3
+    }
+  ]
+}
+```
+
+---
+
+### GET `/study/tldr/<lecture_id>/<slide_number>`
+**Description:** Get a one sentence TL;DR summary for a specific slide
+
+**Response:**
+```json
+{
+  "lecture_id": "uuid",
+  "slide_number": 1,
+  "language": "en",
+  "tldr": "Machine learning enables systems to learn from data without explicit programming."
 }
 ```
 
