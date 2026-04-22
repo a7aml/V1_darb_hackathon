@@ -8,6 +8,8 @@ from werkzeug.utils import secure_filename
 from app.extensions import db
 from app.models.lectures import Lecture, Slide
 from app.modules.upload.slide_detector import extract_slides
+from app.modules.rag.services import process_lecture_embeddings
+
 
 # ─── LOGGER SETUP ─────────────────────────────────────────
 logger = logging.getLogger(__name__)
@@ -202,11 +204,23 @@ def upload_lecture(file, title: str, language: str, user_id: str) -> tuple:
                 db.session.add(slide)
 
             db.session.commit()
-            logger.info(f"✅ Upload complete | lecture_id={lecture.id} | total_slides={len(valid_slides)}")
+            logger.info(f"✅ Slides saved | lecture_id={lecture.id} | total_slides={len(valid_slides)}")
         except Exception as e:
             db.session.rollback()
             logger.error(f"❌ Failed to save slides to DB: {str(e)}")
             return {"error": "Lecture saved but failed to save slide content."}, 500
+
+        # ── STEP 5: Trigger RAG pipeline ──
+        logger.info("🚀 Triggering RAG pipeline...")
+        try:
+            rag_result = process_lecture_embeddings(str(lecture.id))
+            if rag_result["success"]:
+                logger.info(f"✅ RAG pipeline complete | embeddings={rag_result['embeddings_saved']}")
+            else:
+                logger.warning(f"⚠️  RAG pipeline failed: {rag_result['reason']}")
+        except Exception as e:
+            # RAG failure should NOT fail the upload
+            logger.error(f"❌ RAG pipeline exception: {str(e)}")
 
         return {
             "message": "Lecture uploaded and processed successfully",
