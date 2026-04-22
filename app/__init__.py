@@ -14,6 +14,9 @@ def create_app():
     from app.modules.auth.routes import auth_bp
     from app.modules.upload.routes import upload_bp
     from app.modules.study.routes import study_bp
+    from app.modules.quiz.routes import quiz_bp
+    from app.modules.quiz.routes import quiz_bp
+
 
 
 
@@ -21,6 +24,8 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(upload_bp, url_prefix="/api/upload")
     app.register_blueprint(study_bp, url_prefix="/api/study")
+    app.register_blueprint(quiz_bp, url_prefix="/api/quiz")
+
 
 
 
