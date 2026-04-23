@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "about": "About",
+    "testimonials": "Testimonials",
+    "login": "Sign in",
+    "signup": "Get started"
+  },
+  "hero": {
+    "badge": "AI-Powered Learning",
+    "headline_1": "Turn your notes into",
+    "headline_2": "mastery.",
+    "subheadline": "Upload your lecture materials and let Study GPT build you a personalised learning journey — summaries, quizzes, and an AI tutor, all in one place.",
+    "cta_primary": "Start for free",
+    "cta_secondary": "See how it works",
+    "stat_1_value": "50K+",
+    "stat_1_label": "Students learning",
+    "stat_2_value": "2M+",
+    "stat_2_label": "Notes processed",
+    "stat_3_value": "98%",
+    "stat_3_label": "Satisfaction rate"
+  },
+  "features": {
+    "badge": "What you get",
+    "headline": "Everything you need to ace your exams",
+    "subheadline": "Stop drowning in notes. Study GPT transforms your raw materials into the tools that actually work.",
+    "items": [
+      {
+        "title": "AI Summaries",
+        "description": "Instant, bite-sized notes distilled from long lecture documents — no more reading 80 pages the night before."
+      },
+      {
+        "title": "Smart Quizzes",
+        "description": "Flashcards and practice questions generated directly from your content, tailored to how you learn best."
+      },
+      {
+        "title": "24/7 AI Tutor",
+        "description": "Ask anything about your material and get clear, contextual explanations at any hour of the day."
+      },
+      {
+        "title": "Progress Tracking",
+        "description": "See exactly where you stand, what you've mastered, and where to focus your energy next."
+      },
+      {
+        "title": "Multi-format Upload",
+        "description": "Supports PDFs, PowerPoint slides, and Word documents. Just upload and let the AI do the work."
+      },
+      {
+        "title": "Organised Library",
+        "description": "All your courses, summaries, and quizzes in one clean space — always at your fingertips."
+      }
+    ]
+  },
+  "about": {
+    "badge": "Our mission",
+    "headline": "Built for students, by people who remember struggling",
+    "body_1": "Study GPT started with a simple frustration — hundreds of pages of lecture notes, not enough time, and no clear path to understanding. We built the tool we wished we had.",
+    "body_2": "Today, tens of thousands of students use Study GPT to cut through information overload, retain more, and walk into exams with confidence.",
+    "value_1_title": "Student-first",
+    "value_1_desc": "Every decision we make starts with one question: does this help students learn better?",
+    "value_2_title": "Honest AI",
+    "value_2_desc": "We surface your own material, not generic content. The AI works with what you give it.",
+    "value_3_title": "Always improving",
+    "value_3_desc": "We ship updates constantly based on real feedback from real students."
+  },
+  "testimonials": {
+    "badge": "Student stories",
+    "headline": "What students are saying",
+    "subheadline": "From first-year undergraduates to postgrad researchers — here's how Study GPT changed their approach.",
+    "items": [
+      {
+        "quote": "I uploaded three months of biochemistry notes and had a complete revision pack ready in under five minutes. Absolutely changed how I study.",
+        "name": "Sarah K.",
+        "role": "Medical Student, Year 3"
+      },
+      {
+        "quote": "The AI tutor actually explains things in context. It's not just spitting out facts — it connects ideas across my lectures.",
+        "name": "James O.",
+        "role": "Computer Science, BSc"
+      },
+      {
+        "quote": "My grades went from Cs to As in one semester. The quizzes forced me to actually recall things instead of just re-reading.",
+        "name": "Lina M.",
+        "role": "Law Student, Year 2"
+      },
+      {
+        "quote": "As an Arabic speaker, being able to switch the interface to Arabic made everything so much more comfortable to use.",
+        "name": "Omar F.",
+        "role": "Engineering Student"
+      }
+    ]
+  },
+  "footer": {
+    "tagline": "Making learning feel possible — one lecture at a time.",
+    "product": "Product",
+    "company": "Company",
+    "legal": "Legal",
+    "features": "Features",
+    "pricing": "Pricing",
+    "changelog": "Changelog",
+    "about": "About us",
+    "blog": "Blog",
+    "careers": "Careers",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact",
+    "copyright": "© 2024 Study GPT. Keep growing, you're doing great."
+  }
+}
