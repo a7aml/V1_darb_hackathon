@@ -323,3 +323,59 @@ def get_quiz_history(lecture_id: str, user_id: str) -> tuple:
     except Exception as e:
         logger.error(f"❌ Quiz history failed: {str(e)}")
         return {"error": "Failed to fetch quiz history"}, 500
+    
+def get_quiz_session(session_id: str, user_id: str) -> tuple:
+    logger.info(f"📋 Get session | session_id={session_id}")
+    
+    session = QuizSession.query.filter_by(id=session_id, user_id=user_id).first()
+    if not session:
+        return {"error": "Session not found"}, 404
+    
+    quiz = Quiz.query.get(session.quiz_id)
+    attempts = QuestionAttempt.query.filter_by(session_id=session_id).all()
+    
+    questions = []
+    for att in attempts:
+        q = Question.query.get(att.question_id)
+        if q:
+            slide = Slide.query.get(q.slide_id) if q.slide_id else None
+            questions.append({
+                "question_id": str(q.id),
+                "question": q.question_text,
+                "options": q.options,
+                "student_answer": att.student_answer,
+                "correct_answer": q.correct_answer,
+                "is_correct": att.is_correct,
+                "slide_ref": slide.slide_number if slide else None
+            })
+    
+    return {
+        "session_id": str(session.id),
+        "quiz_id": str(session.quiz_id),
+        "lecture_id": str(session.lecture_id),
+        "score": session.score,
+        "correct": session.correct_count,
+        "wrong": session.wrong_count,
+        "xp_earned": session.xp_earned,
+        "time_taken": session.time_taken_seconds,
+        "completed_at": str(session.completed_at),
+        "questions": questions
+    }, 200
+
+
+def delete_quiz(quiz_id: str, user_id: str) -> tuple:
+    logger.info(f"🗑️  Delete quiz | quiz_id={quiz_id}")
+    
+    quiz = Quiz.query.filter_by(id=quiz_id, user_id=user_id).first()
+    if not quiz:
+        return {"error": "Quiz not found"}, 404
+    
+    # Check if quiz has sessions
+    sessions = QuizSession.query.filter_by(quiz_id=quiz_id).count()
+    if sessions > 0:
+        return {"error": "Cannot delete quiz with submitted sessions"}, 400
+    
+    db.session.delete(quiz)
+    db.session.commit()
+    
+    return {"message": "Quiz deleted successfully"}, 200

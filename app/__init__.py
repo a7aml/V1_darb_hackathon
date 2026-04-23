@@ -16,6 +16,10 @@ def create_app():
     from app.modules.study.routes import study_bp
     from app.modules.quiz.routes import quiz_bp
     from app.modules.quiz.routes import quiz_bp
+    from app.modules.assessment.routes import assessment_bp
+    from app.modules.recommendation.routes import recommendation_bp
+    from app.modules.chatbot.routes import chatbot_bp
+
 
 
 
@@ -25,6 +29,10 @@ def create_app():
     app.register_blueprint(upload_bp, url_prefix="/api/upload")
     app.register_blueprint(study_bp, url_prefix="/api/study")
     app.register_blueprint(quiz_bp, url_prefix="/api/quiz")
+    app.register_blueprint(assessment_bp, url_prefix="/api/assessment")
+    app.register_blueprint(recommendation_bp, url_prefix="/api/recommendation")
+    app.register_blueprint(chatbot_bp, url_prefix="/api/chatbot")
+
 
 
 
