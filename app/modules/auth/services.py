@@ -109,3 +109,31 @@ def get_current_user(user_id: str) -> dict:
         return {"error": "User not found"}, 404
 
     return {"user": user.to_dict()}, 200
+
+
+def update_profile(user_id: str, full_name: str) -> tuple:
+    user = User.query.get(user_id)
+    if not user:
+        return {"error": "User not found"}, 404
+    
+    user.full_name = full_name
+    db.session.commit()
+    
+    return {
+        "message": "Profile updated successfully",
+        "user": user.to_dict()
+    }, 200
+
+
+def change_password(user_id: str, old_password: str, new_password: str) -> tuple:
+    user = User.query.get(user_id)
+    if not user:
+        return {"error": "User not found"}, 404
+    
+    if not user.check_password(old_password):
+        return {"error": "Old password is incorrect"}, 400
+    
+    user.set_password(new_password)
+    db.session.commit()
+    
+    return {"message": "Password changed successfully"}, 200

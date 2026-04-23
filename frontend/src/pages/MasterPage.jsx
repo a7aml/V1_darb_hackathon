@@ -260,7 +260,7 @@ const MasterPage = ({ lecture, onReviseSlide }) => {
       </AnimatePresence>
 
       {/* overlays */}
-      <ProcessingOverlay visible={loading.generate} type="flashcards" />
+      <ProcessingOverlay visible={loading.generate} type="quiz" />
       <ProcessingOverlay visible={loading.submit}   type="summary"    />
     </div>
   );

@@ -26,12 +26,22 @@ const StepIndicator = ({ current }) => (
           <div className="flex flex-col items-center gap-1.5">
             <motion.div
               animate={{
-                backgroundColor: active || done ? "#1a4a47" : "#e5e7eb",
+                backgroundColor: active && step.number === 3
+                  ? "#F5C842"
+                  : active || done
+                  ? "#1a4a47"
+                  : "#e5e7eb",
                 scale: active ? 1.12 : 1,
               }}
               transition={{ duration: 0.45, ease }}
               className="w-9 h-9 rounded-full flex items-center justify-center border-2"
-              style={{ borderColor: active || done ? "#1a4a47" : "#e5e7eb" }}
+              style={{
+                borderColor: active && step.number === 3
+                  ? "#F5C842"
+                  : active || done
+                  ? "#1a4a47"
+                  : "#e5e7eb"
+              }}
             >
               <AnimatePresence mode="wait">
                 {done ? (
@@ -51,6 +61,12 @@ const StepIndicator = ({ current }) => (
                   <motion.div key="learn-icon" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                  </motion.div>
+                ) : active && step.number === 3 ? (
+                  <motion.div key="master-icon" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="white" stroke="white"/>
                     </svg>
                   </motion.div>
                 ) : (

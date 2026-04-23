@@ -255,3 +255,46 @@ def get_user_lectures(user_id: str) -> tuple:
     except Exception as e:
         logger.error(f"❌ DB error fetching lectures for user_id={user_id}: {str(e)}")
         return {"error": "Failed to fetch lectures. Please try again."}, 500
+    
+    
+def get_lecture_by_id(lecture_id: str, user_id: str) -> tuple:
+    logger.info(f"📖 Get lecture | lecture_id={lecture_id}")
+    
+    lecture = Lecture.query.filter_by(id=lecture_id, user_id=user_id).first()
+    if not lecture:
+        return {"error": "Lecture not found"}, 404
+    
+    slides = Slide.query.filter_by(lecture_id=lecture_id).order_by(Slide.slide_number).all()
+    
+    result = lecture.to_dict()
+    result["slides"] = [{"id": str(s.id), "slide_number": s.slide_number, "content": s.content} for s in slides]
+    
+    return result, 200
+
+
+def delete_lecture(lecture_id: str, user_id: str) -> tuple:
+    logger.info(f"🗑️  Delete lecture | lecture_id={lecture_id}")
+    
+    lecture = Lecture.query.filter_by(id=lecture_id, user_id=user_id).first()
+    if not lecture:
+        return {"error": "Lecture not found"}, 404
+    
+    db.session.delete(lecture)
+    db.session.commit()
+    
+    return {"message": "Lecture deleted successfully"}, 200
+
+
+def get_lecture_slides(lecture_id: str, user_id: str) -> tuple:
+    logger.info(f"📄 Get slides | lecture_id={lecture_id}")
+    
+    lecture = Lecture.query.filter_by(id=lecture_id, user_id=user_id).first()
+    if not lecture:
+        return {"error": "Lecture not found"}, 404
+    
+    slides = Slide.query.filter_by(lecture_id=lecture_id).order_by(Slide.slide_number).all()
+    
+    return {
+        "lecture_id": lecture_id,
+        "slides": [{"id": str(s.id), "slide_number": s.slide_number, "content": s.content} for s in slides]
+    }, 200

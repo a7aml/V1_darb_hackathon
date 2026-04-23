@@ -84,6 +84,18 @@ const TASK_CONFIG = {
       { icon: "✍️", text: "Writing one perfect sentence"   },
     ],
   },
+  quiz: {
+    title:    "Preparing your quiz…",
+    subtitle: "Generating questions tailored to your lecture.",
+    color:    "#F5C842",
+    steps: [
+      { icon: "📝", text: "Reading your lecture"           },
+      { icon: "🧠", text: "Picking the best topics"        },
+      { icon: "❓", text: "Crafting your questions"        },
+      { icon: "⚖️", text: "Setting the difficulty"         },
+      { icon: "✅", text: "Almost ready…"                  },
+    ],
+  },
 };
 
 // ─── animated brain/AI dots ───────────────────────────────────────────────────
