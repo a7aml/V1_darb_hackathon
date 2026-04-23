@@ -1,14 +1,17 @@
 import logging
 from flask import Blueprint, request, jsonify
 from app.shared.middleware import jwt_required
-from app.modules.quiz.services import generate_quiz, submit_quiz, get_quiz_history
+from app.modules.quiz.services import (
+    generate_quiz,
+    submit_quiz,
+    get_quiz_history,
+    get_quiz_session,
+    delete_quiz
+)
 
 logger = logging.getLogger(__name__)
-
 quiz_bp = Blueprint("quiz", __name__)
 
-
-# ─── 1. GENERATE QUIZ ─────────────────────────────────────
 
 @quiz_bp.route("/generate", methods=["POST"])
 @jwt_required
@@ -25,39 +28,24 @@ def generate():
     num_questions = data.get("num_questions", 0)
     slide_number  = data.get("slide_number", None)
 
-    # ── VALIDATIONS ──
     if not lecture_id:
         return jsonify({"error": "lecture_id is required"}), 400
-
     if not quiz_type:
         return jsonify({"error": "type is required"}), 400
-
     if not difficulty:
         return jsonify({"error": "difficulty is required"}), 400
-
     if not num_questions or not isinstance(num_questions, int):
         return jsonify({"error": "num_questions must be an integer"}), 400
 
-    logger.debug(f"📋 Generate | type={quiz_type} | difficulty={difficulty} | num={num_questions} | slide={slide_number}")
-
-    response, status = generate_quiz(
-        lecture_id=lecture_id,
-        user_id=request.user_id,
-        quiz_type=quiz_type,
-        difficulty=difficulty,
-        num_questions=num_questions,
-        slide_number=slide_number
-    )
+    response, status = generate_quiz(lecture_id, request.user_id, quiz_type, difficulty, num_questions, slide_number)
 
     if status == 201:
         logger.info(f"✅ Quiz generated | quiz_id={response.get('quiz_id')}")
     else:
-        logger.warning(f"⚠️  Quiz generation failed | error={response.get('error')}")
+        logger.warning(f"⚠️  Failed | error={response.get('error')}")
 
     return jsonify(response), status
 
-
-# ─── 2. SUBMIT QUIZ ───────────────────────────────────────
 
 @quiz_bp.route("/submit", methods=["POST"])
 @jwt_required
@@ -73,55 +61,63 @@ def submit():
     time_taken = data.get("time_taken", 0)
     answers    = data.get("answers", [])
 
-    # ── VALIDATIONS ──
     if not quiz_id:
         return jsonify({"error": "quiz_id is required"}), 400
-
     if not lecture_id:
         return jsonify({"error": "lecture_id is required"}), 400
-
-    if not answers:
+    if not answers or not isinstance(answers, list):
         return jsonify({"error": "answers are required"}), 400
 
-    if not isinstance(answers, list):
-        return jsonify({"error": "answers must be a list"}), 400
-
-    logger.debug(f"📋 Submit | quiz_id={quiz_id} | answers={len(answers)}")
-
-    response, status = submit_quiz(
-        quiz_id=quiz_id,
-        lecture_id=lecture_id,
-        user_id=request.user_id,
-        time_taken=time_taken,
-        answers=answers
-    )
+    response, status = submit_quiz(quiz_id, lecture_id, request.user_id, time_taken, answers)
 
     if status == 200:
-        logger.info(f"✅ Quiz submitted | session_id={response.get('session_id')} | score={response.get('score')}")
+        logger.info(f"✅ Submitted | score={response.get('score')}")
     else:
-        logger.warning(f"⚠️  Quiz submit failed | error={response.get('error')}")
+        logger.warning(f"⚠️  Failed | error={response.get('error')}")
 
     return jsonify(response), status
 
-
-# ─── 3. QUIZ HISTORY ──────────────────────────────────────
 
 @quiz_bp.route("/history/<lecture_id>", methods=["GET"])
 @jwt_required
 def history(lecture_id):
     logger.info(f"📨 GET /quiz/history/{lecture_id} | user_id={request.user_id}")
 
-    if not lecture_id:
-        return jsonify({"error": "lecture_id is required"}), 400
-
-    response, status = get_quiz_history(
-        lecture_id=lecture_id,
-        user_id=request.user_id
-    )
+    response, status = get_quiz_history(lecture_id, request.user_id)
 
     if status == 200:
-        logger.info(f"✅ History returned | attempts={len(response.get('attempts', []))}")
+        logger.info(f"✅ History returned")
     else:
-        logger.warning(f"⚠️  History failed | error={response.get('error')}")
+        logger.warning(f"⚠️  Failed | error={response.get('error')}")
+
+    return jsonify(response), status
+
+
+@quiz_bp.route("/session/<session_id>", methods=["GET"])
+@jwt_required
+def session(session_id):
+    logger.info(f"📨 GET /quiz/session/{session_id} | user_id={request.user_id}")
+
+    response, status = get_quiz_session(session_id, request.user_id)
+
+    if status == 200:
+        logger.info(f"✅ Session returned")
+    else:
+        logger.warning(f"⚠️  Failed | error={response.get('error')}")
+
+    return jsonify(response), status
+
+
+@quiz_bp.route("/<quiz_id>", methods=["DELETE"])
+@jwt_required
+def delete(quiz_id):
+    logger.info(f"📨 DELETE /quiz/{quiz_id} | user_id={request.user_id}")
+
+    response, status = delete_quiz(quiz_id, request.user_id)
+
+    if status == 200:
+        logger.info(f"✅ Quiz deleted")
+    else:
+        logger.warning(f"⚠️  Failed | error={response.get('error')}")
 
     return jsonify(response), status
