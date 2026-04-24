@@ -1,27 +1,17 @@
 import { Outlet } from "react-router-dom";
-import DashboardNav   from "../components/dashboard/DashboardNav";
-import ChatbotBubble  from "../components/dashboard/ChatbotBubble";
-import Footer         from "../components/landing/Footer";
+import DashboardNav  from "../components/dashboard/DashboardNav";
+import ChatbotBubble from "../components/dashboard/ChatbotBubble";
 
-// Dashboard is a layout shell — child routes render via <Outlet />
-// Routes:
-//   /dashboard      → UploadPage
-//   /my-progress    → (future)
-//   /ai-tutor       → (future)
+// Footer is intentionally excluded — it only appears on the landing page.
+// The Dashboard shell provides the sticky nav and floating chatbot for all
+// protected routes (/dashboard, /my-progress, /ai-tutor, /study/:id etc.)
 
 const Dashboard = () => (
   <div className="min-h-screen bg-cream-100 flex flex-col">
     <DashboardNav />
-
-    {/* page content */}
-    <main className="flex-1">
+    <main className="flex-1 pt-16">
       <Outlet />
     </main>
-
-    {/* same footer as landing page */}
-    <Footer />
-
-    {/* floating chatbot */}
     <ChatbotBubble />
   </div>
 );
