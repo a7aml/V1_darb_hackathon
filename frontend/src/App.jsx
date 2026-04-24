@@ -44,13 +44,14 @@ const AnimatedRoutes = () => {
             </ProtectedRoute>
           }
         >
+          <Route path="/ai-tutor"    element={<AITutorPage />}    />
           <Route path="/quizzes"     element={<QuizzesPage />}    />
           <Route path="/my-progress" element={<MyProgressPage />} />
-          <Route path="/ai-tutor"    element={<AITutorPage />}    />
+          
         </Route>
 
         {/* legacy redirects */}
-        <Route path="/dashboard" element={<Navigate to="/quizzes" replace />} />
+        <Route path="/dashboard" element={<Navigate to="/ai-tutor" replace />} />
         <Route path="*"          element={<Navigate to="/"        replace />} />
       </Routes>
     </AnimatePresence>

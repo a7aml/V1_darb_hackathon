@@ -28,9 +28,10 @@ const DashboardNav = () => {
     : "??";
 
   const navLinks = [
+    { to: "/ai-tutor",    label: "AI Tutor",    icon: <TutorIcon />   },
     { to: "/quizzes",     label: "Quizzes",     icon: <QuizIcon />    },
     { to: "/my-progress", label: "My Progress", icon: <ProgressIcon /> },
-    { to: "/ai-tutor",    label: "AI Tutor",    icon: <TutorIcon />   },
+   
   ];
 
   const linkClass = ({ isActive }) =>
