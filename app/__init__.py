@@ -24,7 +24,9 @@ def create_app():
     from app.modules.assessment.routes import assessment_bp
     from app.modules.recommendation.routes import recommendation_bp
     from app.modules.chatbot.routes import chatbot_bp
+    from app.modules.voice.routes import voice_bp  # ✅ ADD THIS
 
+# Near the bottom with other blueprints
 
 
 
@@ -37,6 +39,7 @@ def create_app():
     app.register_blueprint(assessment_bp, url_prefix="/api/assessment")
     app.register_blueprint(recommendation_bp, url_prefix="/api/recommendation")
     app.register_blueprint(chatbot_bp, url_prefix="/api/chatbot")
+    app.register_blueprint(voice_bp, url_prefix="/api/voice")  # ✅ ADD THIS
 
 
 

@@ -1,9 +1,12 @@
+// src/components/tutor/TutorChat.jsx - COMPLETE WITH VOICE MODE
 import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as pdfjsLib from "pdfjs-dist";
 import TutorMessage from "./TutorMessage";
 import AIToolsDropPanel from "./AIToolsDropPanel";
 import ProcessingOverlay from "../ui/ProcessingOverlay";
+import useVoiceRecorder from "../../hooks/useVoiceRecorder";
+import VoiceModeOverlay from "./VoiceModeOverlay"; // ✨ NEW
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.mjs",
@@ -191,6 +194,7 @@ const TutorChat = ({
   const [input,       setInput]       = useState("");
   const [dragOver,    setDragOver]    = useState(false);
   const [pendingFile, setPendingFile] = useState(null);
+  const [voiceModeActive, setVoiceModeActive] = useState(false); // ✨ NEW
 
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
@@ -199,6 +203,14 @@ const TutorChat = ({
   const messages   = session?.messages || [];
   const hasMessages = messages.length > 0;
   const hasLecture  = !!session?.lectureId;
+
+  // Voice recorder hook
+  const { isRecording, isProcessing, startRecording, stopRecording } = useVoiceRecorder({
+    onTranscription: ({ text }) => {
+      setInput(text);
+      inputRef.current?.focus();
+    }
+  });
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading, uploading]);
 
@@ -239,6 +251,17 @@ const TutorChat = ({
     } else {
       setInput(card.example);
       inputRef.current?.focus();
+    }
+  };
+
+  const handleVoiceStart = () => {
+    if (isRecording || isProcessing) return;
+    startRecording();
+  };
+
+  const handleVoiceEnd = () => {
+    if (isRecording) {
+      stopRecording();
     }
   };
 
@@ -324,7 +347,6 @@ const TutorChat = ({
               <div className="px-6 pb-6 space-y-5">
                 {messages.map(msg => <TutorMessage key={msg.id} msg={msg} />)}
 
-                {/* typing indicator for chat messages — NOT an overlay */}
                 {loading && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     className="flex gap-3 justify-start">
@@ -341,7 +363,6 @@ const TutorChat = ({
                   </motion.div>
                 )}
 
-                {/* upload in-progress indicator */}
                 {uploading && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     className="flex gap-3 justify-start">
@@ -395,12 +416,58 @@ const TutorChat = ({
               </svg>
             </button>
             <input ref={fileRef} type="file" className="hidden" onChange={handleFileChange} accept="image/*,.pdf,.docx,.pptx" />
+            
             <textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey}
-              disabled={loading || uploading} placeholder="Ask your Study Buddy anything… or drop a lecture file"
+              disabled={loading || uploading || isRecording || isProcessing}
+              placeholder={isRecording ? "🎤 Recording..." : isProcessing ? "Processing..." : "Ask your Study Buddy anything… or drop a lecture file"}
               rows={1} className="flex-1 text-sm text-ink-800 bg-transparent resize-none outline-none placeholder:text-ink-300 disabled:opacity-50 max-h-32 overflow-y-auto leading-relaxed py-1"
               style={{ minHeight: 28 }}
               onInput={e => { e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 128) + "px"; }} />
-            <motion.button onClick={handleSend} disabled={(!input.trim() && !attachedFile) || loading || uploading}
+            
+            {/* Quick voice record button */}
+            <motion.button
+              onMouseDown={handleVoiceStart}
+              onMouseUp={handleVoiceEnd}
+              onTouchStart={handleVoiceStart}
+              onTouchEnd={handleVoiceEnd}
+              disabled={loading || uploading || isProcessing}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all mb-0.5 ${
+                isRecording ? 'bg-red-500 animate-pulse' : 'bg-forest-700 hover:bg-forest-600'
+              } disabled:opacity-40 disabled:cursor-not-allowed`}
+              title="Hold to speak">
+              {isProcessing ? (
+                <Spinner />
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                  <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+              )}
+            </motion.button>
+
+            {/* ✨ NEW: Voice Mode button */}
+            <motion.button
+              onClick={() => setVoiceModeActive(true)}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              disabled={loading || uploading || !hasLecture}
+              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all mb-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ backgroundColor: "#10b981" }}
+              title="Voice Conversation Mode">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+                <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="1" opacity="0.3"/>
+              </svg>
+            </motion.button>
+
+            <motion.button onClick={handleSend} disabled={(!input.trim() && !attachedFile) || loading || uploading || isRecording || isProcessing}
               whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
               className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 disabled:opacity-40 disabled:cursor-not-allowed transition-all mb-0.5"
               style={{ backgroundColor: "#1a4a47" }}>
@@ -410,7 +477,7 @@ const TutorChat = ({
             </motion.button>
           </div>
           <p className="text-center text-2xs text-ink-300 mt-2">
-            Drop a PDF or DOCX to upload a lecture · AI can make mistakes — verify important information
+            {isRecording ? "🎤 Recording... Release to send" : "Hold mic to speak · Click 🔊 for voice mode · Drop PDF/DOCX to upload"}
           </p>
         </div>
       </div>
@@ -427,6 +494,13 @@ const TutorChat = ({
 
       {/* overlay ONLY for tool panel clicks */}
       <ProcessingOverlay visible={toolLoading} type="summary" />
+
+      {/* ✨ NEW: Voice Mode Overlay */}
+      <VoiceModeOverlay
+        isOpen={voiceModeActive}
+        onClose={() => setVoiceModeActive(false)}
+        lectureId={session?.lectureId}
+      />
     </div>
   );
 };

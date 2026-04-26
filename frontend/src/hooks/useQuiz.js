@@ -55,36 +55,37 @@ const useQuiz = (lectureId) => {
   }, []);
 
   // ── submit ───────────────────────────────────────────────────────────────────
-  const submit = useCallback(async () => {
-    if (!quizData) return;
-    const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
-    const answerList = Object.entries(answers).map(([question_id, answer]) => ({
-      question_id: Number(question_id),
-      answer,
-    }));
+ // ── submit ───────────────────────────────────────────────────────────────────
+const submit = useCallback(async () => {
+  if (!quizData) return;
+  const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
+  const answerList = Object.entries(answers).map(([question_id, answer]) => ({
+    question_id,  // ✅ Keep as string (UUID)
+    answer,
+  }));
 
-    setLoad("submit", true);
-    try {
-      const data = await submitQuiz({
-        quiz_id:    quizData.quiz_id,
-        lecture_id: lectureId,
-        time_taken: timeTaken,
-        answers:    answerList,
-      });
-      setResult(data);
-      setPhase("results");
+  setLoad("submit", true);
+  try {
+    const data = await submitQuiz({
+      quiz_id:    quizData.quiz_id,
+      lecture_id: lectureId,
+      time_taken: timeTaken,
+      answers:    answerList,
+    });
+    setResult(data);
+    setPhase("results");
 
-      // fetch detailed result + progress in parallel
-      await Promise.all([
-        fetchDetailedResult(data.session_id),
-        fetchProgress(),
-      ]);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoad("submit", false);
-    }
-  }, [quizData, answers, lectureId]);
+    // fetch detailed result + progress in parallel
+    await Promise.all([
+      fetchDetailedResult(data.session_id),
+      fetchProgress(),
+    ]);
+  } catch (err) {
+    toast.error(err.message);
+  } finally {
+    setLoad("submit", false);
+  }
+}, [quizData, answers, lectureId]);
 
   // ── fetch detailed result ────────────────────────────────────────────────────
   const fetchDetailedResult = useCallback(async (sessionId) => {

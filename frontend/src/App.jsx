@@ -60,6 +60,7 @@ const AnimatedRoutes = () => {
 
 const App = () => (
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    {console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)}
     <BrowserRouter>
       <Toaster
         position="top-center"
